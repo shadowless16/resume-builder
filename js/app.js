@@ -71,12 +71,15 @@ function renderMainTabs() {
 
 // Render the dropdown menu (remaining sections)
 function renderDropdownMenu() {
-  dropdownContent.innerHTML = ""
+  const dropdownContent = document.getElementById("dropdown-content");
+  if (!dropdownContent) return;
+
+  dropdownContent.innerHTML = "";
 
   sectionsData.slice(5).forEach((section) => {
-    const dropdownItem = document.createElement("div")
-    dropdownItem.className = "dropdown-item"
-    dropdownItem.dataset.tab = section.id
+    const dropdownItem = document.createElement("div");
+    dropdownItem.className = "dropdown-item";
+    dropdownItem.dataset.tab = section.id;
 
     dropdownItem.innerHTML = `
       <div class="dropdown-item-text">
@@ -84,28 +87,21 @@ function renderDropdownMenu() {
         <span>${section.name}</span>
       </div>
       <span class="dropdown-item-completion">${section.completion}%</span>
-    `
+    `;
 
     dropdownItem.addEventListener("click", () => {
-      setActiveTab(section.id)
-      dropdownContent.classList.remove("show")
-    })
+      setActiveTab(section.id);
+      dropdownContent.classList.remove("show"); // Close dropdown after clicking
+    });
 
-    dropdownContent.appendChild(dropdownItem)
-  })
+    dropdownContent.appendChild(dropdownItem);
+  });
 }
 
 // Load the content for the active tab
 function loadTabContent(tabId) {
-  const section = sectionsData.find((s) => s.id === tabId);
-
-  if (section && section.component) {
-    // Special handling for dynamic Career Goals section
-    if (section.id === "career-goals" && typeof window.renderCareerGoalsSection === "function") {
-      tabContent.innerHTML = "";
-      window.renderCareerGoalsSection();
-      return;
-    }
+  const section = sectionsData.find(s => s.id === tabId);
+  if (section) {
     // Special handling for dynamic Motivation Statements section
     if (section.id === "motivation" && typeof window.renderMotivationStatementsSection === "function") {
       tabContent.innerHTML = "";
@@ -151,6 +147,10 @@ function setActiveTab(tabId) {
 
   // Load tab content
   loadTabContent(tabId)
+  // Re-render dropdown menu to re-attach event handlers
+  renderDropdownMenu()
+  // Always close the dropdown after switching tab
+  if (dropdownContent) dropdownContent.classList.remove("show")
 }
 
 // Setup edit buttons
@@ -1757,19 +1757,35 @@ function toggleSidebar() {
   sidebarToggle.innerHTML = isSidebarOpen ? '<i class="fas fa-times"></i>' : '<i class="fas fa-bars"></i>'
 }
 
-// Setup event listeners
+// Debugging dropdown functionality
 function setupEventListeners() {
-  // Toggle dropdown menu
-  moreButton.addEventListener("click", () => {
-    dropdownContent.classList.toggle("show")
-  })
+  const moreButton = document.getElementById("more-button");
+  const dropdownContent = document.getElementById("dropdown-content");
 
-  // Close dropdown when clicking outside
-  document.addEventListener("click", (event) => {
-    if (!event.target.closest(".more-dropdown")) {
-      dropdownContent.classList.remove("show")
-    }
-  })
+  if (moreButton && dropdownContent) {
+    // Toggle dropdown visibility on button click
+    moreButton.addEventListener("click", (event) => {
+      event.stopPropagation(); // Prevent event from bubbling up
+      dropdownContent.classList.toggle("show");
+      console.log("Dropdown toggled. Current state:", dropdownContent.classList.contains("show")); // Debug log
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener("click", () => {
+      if (dropdownContent.classList.contains("show")) {
+        dropdownContent.classList.remove("show");
+        console.log("Dropdown closed by outside click."); // Debug log
+      }
+    });
+
+    // Close dropdown when clicking an option
+    dropdownContent.addEventListener("click", (event) => {
+      if (event.target.classList.contains("dropdown-item")) {
+        dropdownContent.classList.remove("show");
+        console.log("Dropdown closed by selecting an option."); // Debug log
+      }
+    });
+  }
 
   // Toggle sidebar
   sidebarToggle.addEventListener("click", toggleSidebar)

@@ -1,0 +1,61 @@
+db.customer.insertMany([
+  {
+    "name": "John Doe",
+    "age": 30,
+    "email": "john.doe@example.com"
+  },
+  {
+    "name": "Jane Smith",
+    "age": 25,
+    "email": "jane.smith@example.com"
+  },
+  {
+    "name": "Alice Johnson",
+    "age": 28,
+    "email": "alice.johnson@example.com"
+  },
+  {
+    "name": "Bob Brown",
+    "age": 35,
+    "email": "bob.brown@example.com"
+  },
+  {
+    "name": "Charlie Davis",
+    "age": 22,
+    "email": "charlie.davis@example.com"
+  }
+])
+
+
+db.orders.insertMany([
+  {
+    "order_number": "ORD001",
+    "customerId": ObjectId('681b32b75f138985b9b7123b'),
+    "quantity": 1,
+    "customer_details": {
+      "_id": ObjectId('681b32b75f138985b9b7123b'),
+      "name": "John Doe",
+      "email": "john.doe@example.com"
+    }
+  },
+  {
+    "order_number": "ORD002",
+    "customerId": ObjectId('681b32b75f138985b9b7123c'),
+    "quantity": 2,
+    "customer_details": {
+      "_id": ObjectId('681b32b75f138985b9b7123c'),
+      "name": "Jane Smith",
+      "email": "jane.smith@example.com"
+    }
+  },
+  {
+    "order_number": "ORD003",
+    "customerId": ObjectId('681b32b75f138985b9b7123d'),
+    "quantity": 1,
+    "customer_details": {
+      "_id": ObjectId('681b32b75f138985b9b7123d'),
+      "name": "Alice Johnson",
+      "email": "alice.johnson@example.com"
+    }
+  }
+])
